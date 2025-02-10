@@ -6,7 +6,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 const chats = [
@@ -24,10 +23,9 @@ const chats = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="w-[16rem]">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarTrigger />
           <SidebarGroupContent>
             <SidebarMenu>
               {chats.map((item) => (

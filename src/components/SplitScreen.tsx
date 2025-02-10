@@ -14,7 +14,10 @@ export default function SplitScreen() {
         </div>
       </ResizablePanel>
 
-      <ResizableHandle withHandle className="w-1 bg-gray-400 cursor-col-resize" />
+      <ResizableHandle
+        withHandle
+        className="w-1 bg-gray-400 cursor-col-resize"
+      />
 
       <ResizablePanel defaultSize={60}>
         <div className="flex items-center justify-center h-full bg-gray-300">

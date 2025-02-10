@@ -1,25 +1,26 @@
 import SplitScreen from "./components/SplitScreen";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useState } from "react";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative flex min-h-svh flex-col bg-background">
-      <div className="themes-wrapper bg-background">
-        <SidebarProvider open={open} onOpenChange={setOpen}>
-          <AppSidebar />
-          <main className="relative flex min-h-svh flex-1 flex-col bg-background peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow">
-            <header className="flex items-center justify-between px-4 h-14">
-              <SidebarTrigger />
-            </header>
-            <SplitScreen />
-          </main>
-        </SidebarProvider>
+    <SidebarProvider open={open} onOpenChange={setOpen}>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main
+          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear ${
+            open ? "ml-[16rem]" : "ml-0"
+          }`}
+        >
+          <Navbar />
+          <SplitScreen />
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 
