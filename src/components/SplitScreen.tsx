@@ -7,9 +7,9 @@ import ChatInterface from "./ChatInterface";
 
 export default function SplitScreen() {
   return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel className="h-full" minSize={30} defaultSize={40}>
-        <div className="flex items-center justify-around flex-col h-full bg-gray-200">
+    <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-3.5rem)]">
+      <ResizablePanel className="h-full flex" minSize={30} defaultSize={40}>
+        <div className="flex flex-col h-full w-full bg-gray-200">
           <ChatInterface />
         </div>
       </ResizablePanel>
@@ -19,7 +19,7 @@ export default function SplitScreen() {
         className="w-1 bg-gray-400 cursor-col-resize"
       />
 
-      <ResizablePanel defaultSize={60}>
+      <ResizablePanel defaultSize={60} className="h-full">
         <div className="flex items-center justify-center h-full bg-gray-300">
           Other Content
         </div>

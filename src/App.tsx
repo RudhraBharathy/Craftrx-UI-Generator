@@ -12,7 +12,7 @@ function App() {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main
-          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear ${
+          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear w-dvw ${
             open ? "ml-[16rem]" : "ml-0"
           }`}
         >

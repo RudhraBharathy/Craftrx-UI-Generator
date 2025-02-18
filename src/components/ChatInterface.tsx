@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CodeBlock from "./CodeBlock";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { PiTelegramLogo } from "react-icons/pi";
+import ChatLoading from "./ChatLoading";
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState<string>("");
@@ -11,6 +12,12 @@ const ChatInterface: React.FC = () => {
     { role: "user" | "bot"; text: string }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const GEMINI_API_URL =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
@@ -67,8 +74,8 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full p-3 bg-gray-50 rounded-lg shadow-lg flex flex-col">
-      <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg border border-gray-200 mb-4">
+    <div className="h-full flex flex-col bg-gray-50 rounded-lg shadow-lg">
+      <div className="flex-1 bg-white p-2 rounded-lg border border-gray-200 overflow-y-auto">
         <div className="space-y-4">
           {messages.map((msg, index) => (
             <div
@@ -97,39 +104,32 @@ const ChatInterface: React.FC = () => {
               </div>
             </div>
           ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 rounded-2xl px-4 py-2 rounded-bl-none">
-                <div className="flex space-x-2 items-center">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
-                </div>
-              </div>
-            </div>
-          )}
+          {loading && <ChatLoading />}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          className="flex-1 bg-white"
-          disabled={loading}
-        />
-        <Button
-          onClick={handleSend}
-          className={`px-4 py-2 ${
-            loading ? "opacity-50" : "hover:bg-black-700"
-          }`}
-          disabled={loading}
-        >
-          <PiTelegramLogo className="w-5 h-5" />
-        </Button>
+      <div className="p-2 border-t border-gray-300 bg-white">
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message..."
+            className="flex-1 bg-white"
+            disabled={loading}
+          />
+          <Button
+            onClick={handleSend}
+            className={`px-4 py-2 ${
+              loading ? "opacity-50" : "hover:bg-black-700"
+            }`}
+            disabled={loading}
+          >
+            <PiTelegramLogo className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
