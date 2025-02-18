@@ -9,10 +9,10 @@ function App() {
 
   return (
     <SidebarProvider open={open} onOpenChange={setOpen}>
-      <div className="flex min-h-screen w-full">
+      <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar />
         <main
-          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear w-dvw ${
+          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear ${
             open ? "ml-[16rem]" : "ml-0"
           }`}
         >
