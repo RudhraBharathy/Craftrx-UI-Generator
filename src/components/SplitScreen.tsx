@@ -4,6 +4,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import ChatInterface from "./ChatInterface";
+import { ChatNewInterface } from "./chat";
 
 export default function SplitScreen() {
   return (
@@ -20,9 +21,7 @@ export default function SplitScreen() {
       />
 
       <ResizablePanel defaultSize={60} className="h-full">
-        <div className="flex items-center justify-center h-full bg-gray-300">
-          Other Content
-        </div>
+        <ChatNewInterface />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
