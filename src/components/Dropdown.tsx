@@ -3,22 +3,34 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 
-export function Dropdown({ dropdownvalue }: any) {
+interface DropdownProps {
+  dropdownvalue: string[];
+  onChange: (value: string) => void;
+  value: string;
+  className?: string;
+}
+
+export function Dropdown({
+  dropdownvalue,
+  onChange,
+  value,
+  className,
+}: DropdownProps) {
   return (
-    <Select defaultValue={dropdownvalue[0]}>
-      <SelectTrigger className="text-white border-zinc-600 w-[180px]">
-        <SelectValue placeholder={dropdownvalue[0]} />
+    <Select onValueChange={onChange} value={value}>
+      <SelectTrigger className={className}>
+        <SelectValue placeholder="Select AI Model" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel></SelectLabel>
-          {dropdownvalue.map((value: any) => (
-            <SelectItem key={value} value={value}>{value}</SelectItem>
+          {dropdownvalue.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>

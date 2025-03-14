@@ -1,136 +1,183 @@
-import { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import CodeBlock from "./CodeBlock";
-import { Input } from "@/components/ui/input";
-import { Button } from "./ui/button";
-import { PiTelegramLogo } from "react-icons/pi";
+import { useRef, useState, useEffect } from "react";
+import useGemini from "@/hooks/useGemini";
+import useStarCoder from "@/hooks/useStarCoder";
 import ChatLoading from "./ChatLoading";
+import CodeBlock from "./CodeBlock";
+import { extractCodeInfo } from "@/utils/extractCode";
+import MessageInput from "./MessageInput";
+interface ChatInterfaceProps {
+  userName?: string;
+}
 
-const ChatInterface: React.FC = () => {
-  const [input, setInput] = useState<string>("");
-  const [messages, setMessages] = useState<
-    { role: "user" | "bot"; text: string }[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
+const ChatInterface = ({ userName = "Crafter" }: ChatInterfaceProps) => {
+  const {
+    messages: geminiMessages,
+    sendMessage: sendGeminiMessage,
+    loading: geminiLoading,
+  } = useGemini();
+  const {
+    messages: starcoderMessages,
+    sendMessage: sendStarcoderMessage,
+    loading: starcoderLoading,
+  } = useStarCoder();
+  const [inputValue, setInputValue] = useState("");
+  const [aiProvider, setAiProvider] = useState<"gemini" | "starcoder">(
+    "gemini"
+  );
+  const [isInitialState, setIsInitialState] = useState(true);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [geminiMessages, starcoderMessages]);
 
-  const GEMINI_API_URL =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API;
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+    if (isInitialState) {
+      setIsInitialState(false);
+    }
 
-    setMessages((prev) => [...prev, { role: "user", text: input }]);
-    setLoading(true);
-    setInput("");
+    aiProvider === "gemini"
+      ? sendGeminiMessage(inputValue)
+      : sendStarcoderMessage(inputValue);
+    setInputValue("");
 
-    try {
-      const { data } = await axios.post(
-        `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-        {
-          contents: [
-            {
-              parts: [
-                {
-                  text: `${input}\nFormat your response in Markdown with code blocks.`,
-                },
-              ],
-            },
-          ],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      const aiText =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "No response received.";
-
-      setMessages((prev) => [...prev, { role: "bot", text: aiText }]);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSend();
+  const messages = aiProvider === "gemini" ? geminiMessages : starcoderMessages;
+  const loading = aiProvider === "gemini" ? geminiLoading : starcoderLoading;
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height =
+        scrollHeight > 150 ? "150px" : `${scrollHeight}px`;
+      textareaRef.current.style.overflowY =
+        scrollHeight > 150 ? "auto" : "hidden";
     }
   };
 
-  const extractCodeInfo = (text: string) => {
-    const match = text.match(/```(\w+)?\n([\s\S]*?)```/);
-    return match
-      ? { language: match[1] || "text", code: match[2].trim() }
-      : { language: "text", code: text };
-  };
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, []);
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 rounded-lg shadow-lg">
-      <div className="flex-1 bg-white p-2 rounded-lg border border-gray-200 overflow-y-auto">
-        <div className="space-y-4">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                  msg.role === "user"
-                    ? "bg-black text-white rounded-br-none"
-                    : "bg-gray-100 text-gray-900 rounded-bl-none"
-                }`}
-              >
-                <div className="whitespace-pre-wrap">
-                  {msg.text.includes("```")
-                    ? (() => {
-                        const { language, code } = extractCodeInfo(msg.text);
-                        return <CodeBlock language={language} code={code} />;
-                      })()
-                    : msg.text
-                        .split("\n")
-                        .map((line, idx) => <p key={idx}>{line}</p>)}
-                </div>
-              </div>
-            </div>
-          ))}
-          {loading && <ChatLoading />}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
+    <div className="min-h-screen bg-zinc-900 flex flex-col pt-16">
+      {" "}
+      {isInitialState ? (
+        <div className="flex-grow flex flex-col items-center justify-center p-6">
+          <div className="text-center mb-8 w-full max-w-4xl">
+            <h1 className="text-white text-3xl mb-2">
+              Good evening, {userName}.
+            </h1>
+            <p className="text-zinc-300 text-lg mb-8">
+              How can I help you today?
+            </p>
 
-      <div className="p-2 border-t border-gray-300 bg-white">
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="flex-1 bg-white"
-            disabled={loading}
-          />
-          <Button
-            onClick={handleSend}
-            className={`px-4 py-2 ${
-              loading ? "opacity-50" : "hover:bg-black-700"
-            }`}
-            disabled={loading}
-          >
-            <PiTelegramLogo className="w-5 h-5" />
-          </Button>
+            <div className="w-[90%] mx-auto bg-zinc-800/20 backdrop-blur-sm rounded-xl p-4 border border-zinc-700/50">
+              <MessageInput
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                handleSend={handleSend}
+                loading={loading}
+                aiProvider={aiProvider}
+                setAiProvider={setAiProvider}
+                textareaRef={textareaRef}
+                adjustTextareaHeight={adjustTextareaHeight}
+                placeholder="What do you want to know?"
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col h-screen">
+          <div
+            ref={chatContainerRef}
+            className="flex-grow p-4 md:px-4 pt-18 overflow-y-auto"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "#888 #f1f1f1" }}
+          >
+            <div className="max-w-3xl mx-auto">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`mb-6 ${
+                    msg.role === "user" ? "pl-12 md:pl-24" : ""
+                  }`}
+                >
+                  <div
+                    className={`text-sm mb-2 ${
+                      msg.role === "user"
+                        ? "text-right text-zinc-400"
+                        : "text-zinc-400"
+                    }`}
+                  >
+                    {msg.role === "user"
+                      ? "You"
+                      : aiProvider === "gemini"
+                      ? "Gemini"
+                      : "Starcoder"}
+                  </div>
+                  <div
+                    className={`text-base md:text-lg ${
+                      msg.role === "user" ? "text-zinc-200" : "text-white"
+                    }`}
+                  >
+                    {msg.text.includes("```") ||
+                    msg.text.includes("generated_text")
+                      ? (() => {
+                          const { language, code } = extractCodeInfo(msg.text);
+                          return <CodeBlock language={language} code={code} />;
+                        })()
+                      : msg.text.split("\n").map((line, idx) =>
+                          line ? (
+                            <p key={idx} className="mb-4">
+                              {line}
+                            </p>
+                          ) : (
+                            <div key={idx} className="h-4" />
+                          )
+                        )}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="mb-6">
+                  <div className="text-sm mb-2 text-zinc-400">
+                    {aiProvider === "gemini" ? "Gemini" : "Starcoder"}
+                  </div>
+                  <ChatLoading />
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
+
+          <div className="border-t border-zinc-800 bg-zinc-900">
+            <div className="max-w-3xl mx-auto p-4">
+              <MessageInput
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                handleSend={handleSend}
+                loading={loading}
+                aiProvider={aiProvider}
+                setAiProvider={setAiProvider}
+                textareaRef={textareaRef}
+                adjustTextareaHeight={adjustTextareaHeight}
+                className="bg-zinc-800/50 rounded-xl border border-zinc-700/50 focus-visible:ring-1 focus-visible:ring-zinc-500 p-2"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
