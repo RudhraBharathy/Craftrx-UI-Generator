@@ -12,7 +12,7 @@ export interface ComponentGenerationResponse {
   usageExample?: string;
 }
 
-const GEMINI_API_KEY = 'AIzaSyDmfmtV-qctAR68HEE-Dd8OMsl7dNFOsTQ';
+const GEMINI_API_KEY = process.env.VITE_GEMINI_API;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 export async function generateComponent(request: ComponentGenerationRequest): Promise<ComponentGenerationResponse> {
