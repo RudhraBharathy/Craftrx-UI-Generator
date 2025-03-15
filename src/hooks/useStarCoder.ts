@@ -6,8 +6,7 @@ interface Message {
   text: string;
 }
 
-const STARCODER_API_URL =
-  "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b";
+const STARCODER_API_URL = "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b";
 const STARCODER_API_KEY = import.meta.env.VITE_HF_API;
 
 const useStarCoder = () => {
@@ -24,27 +23,31 @@ const useStarCoder = () => {
       const { data } = await axios.post(
         STARCODER_API_URL,
         {
-          inputs: `${input}\nFormat your response in Markdown.`,
+          inputs: input,
           parameters: {
-            max_new_tokens: 150,
+            max_new_tokens: 500,
             temperature: 0.2,
             top_p: 0.9,
             do_sample: true,
+            return_full_text: true,
           },
         },
         {
           headers: {
-            Authorization: `Bearer ${STARCODER_API_KEY}`,
+            "Authorization": `Bearer ${STARCODER_API_KEY}`,
             "Content-Type": "application/json",
           },
         }
       );
 
-      const aiText = data?.[0]?.generated_text?.trim() || "No response received.";
-      const { language, code } = aiText;
-      const finalText = code ? `\n\`\`\`${language}\n${code}\n\`\`\`` : aiText;
-
-      setMessages((prev) => [...prev, { role: "bot", text: finalText }]);
+      let aiText = data?.[0]?.generated_text || "No response received.";
+      
+      if (aiText.includes("```") && aiText.split("```").length % 2 === 1) {
+        aiText += "```";
+      }
+      
+      const formattedResponse = JSON.stringify({ generated_text: aiText });
+      setMessages((prev) => [...prev, { role: "bot", text: formattedResponse }]);
     } catch (error) {
       console.error("StarCoder API Error:", error);
     } finally {

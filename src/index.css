@@ -145,3 +145,118 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 221 83% 53%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm rounded-xl;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between py-3 px-4 border-b border-border;
+  }
+
+  .input-container {
+    @apply relative flex flex-col gap-1;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
+  }
+
+  .btn-outline {
+    @apply border border-border bg-background hover:bg-secondary text-foreground px-4 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
+  }
+
+  .code-window {
+    @apply bg-card text-card-foreground p-4 rounded-lg font-mono text-sm relative overflow-hidden border border-border;
+  }
+
+  .interactive-panel {
+    @apply bg-card shadow-sm border border-border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-md;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}

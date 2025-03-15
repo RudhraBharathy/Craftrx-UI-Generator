@@ -1,22 +1,23 @@
+import { useAiPreferenceStore } from "@/store/useAiPreferenceStore"; // Import Zustand store
 import { Mic, SendHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Dropdown } from "./Dropdown";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 
 const MessageInput = ({
   inputValue,
   setInputValue,
   handleSend,
   loading,
-  aiProvider,
-  setAiProvider,
   textareaRef,
   adjustTextareaHeight,
   placeholder = "Message",
   className = "",
-  dropdownClassName = "text-white border-zinc-600 w-[180px]",
+  dropdownClassName = "bg-transparent text-white border-zinc-600 w-[180px]",
 }: any) => {
   const AiChatModalPreference = ["Gemini 1.5 Flash", "Starcoder"];
+
+  const { currAiPreference, setAiPreference } = useAiPreferenceStore();
 
   const handleKeyDown = (e: {
     key: string;
@@ -48,9 +49,13 @@ const MessageInput = ({
       <div className="flex justify-between gap-2">
         <Dropdown
           dropdownvalue={AiChatModalPreference}
-          value={aiProvider === "gemini" ? "Gemini 1.5 Flash" : "Starcoder"}
+          value={
+            currAiPreference === "gemini" ? "Gemini 1.5 Flash" : "Starcoder"
+          }
           onChange={(value: string) =>
-            setAiProvider(value === "Gemini 1.5 Flash" ? "gemini" : "starcoder")
+            setAiPreference(
+              value === "Gemini 1.5 Flash" ? "gemini" : "starcoder"
+            )
           }
           className={dropdownClassName}
         />
