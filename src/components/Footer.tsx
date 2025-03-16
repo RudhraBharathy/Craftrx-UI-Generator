@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
           </p>
           <p className="text-sm mt-4">
             Made with 🤍{" "}
-            <a href="https://www.rudhrabharathy.github.io">Rudhra Bharathy</a>
+            <a href="https://rudhrabharathy.github.io/">Rudhra Bharathy</a>
           </p>
         </div>
       </div>

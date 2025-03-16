@@ -17,12 +17,17 @@ const Navbar: React.FC = () => {
   const isProtectedRoute = window.location.pathname.startsWith("/dashboard");
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-      <div className="container mx-auto flex items-center justify-between px-4 py-4">
-        <header className="flex items-center justify-between px-4 h-14">
-          {isProtectedRoute && <SidebarTrigger />}
-        </header>
-        <div className="flex items-center gap-2">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border w-full">
+      <div className="flex items-center justify-between px-4 py-2 w-full">
+        <div className="flex items-center justify-around">
+          {isProtectedRoute && (
+            <header className="inline h-14">
+              <SidebarTrigger
+                variant="default"
+                className="h-14 w-14 bg-transparent hover:bg-transparent text-black cursor-pointer [&_svg]:size-6"
+              />
+            </header>
+          )}
           <Link
             to="/"
             className="flex items-center gap-2 text-xl font-semibold"
