@@ -3,17 +3,21 @@ import { Mic, SendHorizontal } from "lucide-react";
 import { Dropdown } from "./Dropdown";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useEffect } from "react";
+import { log } from "console";
 
 const MessageInput = ({
   inputValue,
   setInputValue,
   handleSend,
   loading,
+  aiProvider,
+  setAiProvider,
   textareaRef,
   adjustTextareaHeight,
   placeholder = "Message",
   className = "",
-  dropdownClassName = "bg-transparent text-white border-zinc-600 w-[180px]",
+  dropdownClassName = "cursor-pointer outline-none bg-transparent text-white border-zinc-600 w-[180px]",
 }: any) => {
   const AiChatModalPreference = ["Gemini 1.5 Flash", "Starcoder"];
 
@@ -34,6 +38,10 @@ const MessageInput = ({
     setInputValue(e.target.value);
     adjustTextareaHeight();
   };
+
+  useEffect(() => {
+    setAiProvider(currAiPreference);
+  }, [currAiPreference]);
 
   return (
     <div className={`flex flex-col gap-3 ${className}`}>

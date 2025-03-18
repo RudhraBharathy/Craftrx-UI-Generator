@@ -47,10 +47,8 @@ const App = () => {
                   path="/dashboard"
                   element={
                     <ProtectedRoute>
-                      <div className="flex h-screen w-full overflow-hidden">
-                        <div>
-                          <AppSidebar />
-                        </div>
+                      <div className="flex h-[92dvh] mt-20">
+                        <AppSidebar />
                         <main
                           className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear ${
                             open ? "ml-[16rem]" : "ml-0"

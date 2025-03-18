@@ -19,6 +19,7 @@ body {
 
 html {
   font-family: var(--font-roboto);
+  overflow: hidden;
 }
 :root {
   --background: hsl(210, 40%, 98%);
