@@ -1,20 +1,25 @@
-
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const SignIn: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,23 +27,19 @@ const SignIn: React.FC = () => {
 
     try {
       const { error } = await signIn(email, password);
-      
+
       if (error) {
-        toast({
-          title: 'Sign in failed',
+        toast.error("Sign in failed", {
           description: error.message,
-          variant: 'destructive',
         });
         return;
       }
-      
+
       // Redirect to dashboard on successful sign in
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
-      toast({
-        title: 'Sign in failed',
-        description: 'An unexpected error occurred',
-        variant: 'destructive',
+      toast.error("Sign in failed", {
+        description: "An unexpected error occurred",
       });
     } finally {
       setIsLoading(false);
@@ -70,7 +71,10 @@ const SignIn: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm text-primary underline-offset-4 hover:underline">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary underline-offset-4 hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
@@ -85,16 +89,15 @@ const SignIn: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
             <div className="text-center text-sm">
-              Don't have an account?{' '}
-              <Link to="/sign-up" className="text-primary underline-offset-4 hover:underline">
+              Don't have an account?{" "}
+              <Link
+                to="/sign-up"
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 Sign up
               </Link>
             </div>

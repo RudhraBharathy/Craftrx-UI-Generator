@@ -4,14 +4,12 @@ import { Dropdown } from "./Dropdown";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { useEffect } from "react";
-import { log } from "console";
 
 const MessageInput = ({
   inputValue,
   setInputValue,
   handleSend,
   loading,
-  aiProvider,
   setAiProvider,
   textareaRef,
   adjustTextareaHeight,

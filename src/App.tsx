@@ -1,5 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
@@ -35,7 +34,6 @@ const App = () => {
     <AuthProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
         <BrowserRouter>
           <SidebarProvider open={open} onOpenChange={setOpen}>
             <Layout>
@@ -50,9 +48,9 @@ const App = () => {
                       <div className="flex h-[92dvh] mt-20">
                         <AppSidebar />
                         <main
-                          className={`flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear ${
-                            open ? "ml-[16rem]" : "ml-0"
-                          }`}
+                          className={
+                            "flex-1 relative flex flex-col bg-background transition-[margin] duration-200 ease-linear"
+                          }
                         >
                           <SplitScreen />
                         </main>
